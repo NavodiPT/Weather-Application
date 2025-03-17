@@ -3,10 +3,9 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const nodemailer = require("nodemailer");
-const nodeCron = require("node-cron");
-const axios = require("axios");
+const cron = require("node-cron");
 const userRoutes = require('./routes/userRoute');
-const User = require('./models/User')
+const User = require('./models/User');
 
 dotenv.config();
 
@@ -20,15 +19,21 @@ mongoose.connect(process.env.MONGO_URI, {
 }).then(() => console.log('MongoDB Connected'))
 .catch(err => console.log(err));
 
-app.use("/api/users", userRoutes);
+app.use("/api", userRoutes);
 
-const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    }
-  });
+
+// // Run fetchWeatherAndStore every 3 hours
+// cron.schedule("0 */3 * * *", async () => {
+//   console.log("Fetching weather data...");
+//   const users = await User.find();
+//   for (const user of users) {
+//       await fetchWeatherAndStore(user.email, user.location);
+//   }
+// });
+
+// // Run sendWeatherReports every 3 hours
+// cron.schedule("0 */3 * * *", sendWeatherReports);
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
